@@ -1,69 +1,82 @@
-# React + TypeScript + Vite
+# UserProfile Component
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+React компонент для відображення профілю користувача з асинхронним завантаженням даних та покриттям тестами.
 
-Currently, two official plugins are available:
+## 🚀 Встановлення та запуск
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+```bash
+# Встановлення залежностей
+npm install
+npm install --save-dev vitest @testing-library/react @testing-library/jest-dom jsdom
 
-## Expanding the ESLint configuration
+# Запуск додатку
+npm run dev
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
-
-```js
-export default tseslint.config([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-
-      // Remove tseslint.configs.recommended and replace with this
-      ...tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      ...tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      ...tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+# Запуск тестів
+npm run test:run        # один раз
+npm run test           # режим спостереження
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+## 📁 Структура
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default tseslint.config([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
 ```
+src/
+├── components/
+│   ├── UserProfile.tsx      # Компонент
+│   └── UserProfile.test.tsx # Тести
+├── test/
+│   ├── setup.ts            # Налаштування тестів
+│   └── vitest.d.ts         # TypeScript типи
+```
+
+## 🔧 Функціональність
+
+**UserProfile** компонент:
+- Виконує асинхронний запит до `https://jsonplaceholder.typicode.com/users/1`
+- Відображає індикатор завантаження
+- Показує дані користувача (ім'я, email, телефон, веб-сайт)
+- Обробляє помилки з можливістю повторного запиту
+- Використовує React hooks (useState, useEffect)
+
+## 🧪 Тести
+
+5 тестів покривають всі сценарії:
+- Індикатор завантаження
+- Успішне відображення даних
+- Обробка мережевих помилок
+- Обробка HTTP помилок
+- Перевірка API викликів
+
+**Технології**: Vitest + React Testing Library + мокування fetch через `vi.stubGlobal()`
+
+## ⚙️ Конфігурація
+
+**vitest.config.ts**:
+```typescript
+import { defineConfig } from 'vite';
+import react from '@vitejs/plugin-react';
+
+export default defineConfig({
+  plugins: [react()],
+  test: {
+    globals: true,
+    environment: 'jsdom',
+    setupFiles: ['./src/test/setup.ts'],
+  },
+});
+```
+
+**package.json scripts**:
+```json
+{
+  "scripts": {
+    "test": "vitest",
+    "test:run": "vitest run"
+  }
+}
+```
+
+## 📦 Залежності
+
+- React 18+, TypeScript
+- **Dev**: vitest, @testing-library/react, @testing-library/jest-dom, jsdom
